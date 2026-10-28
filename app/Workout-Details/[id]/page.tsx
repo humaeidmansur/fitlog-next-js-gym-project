@@ -7,13 +7,10 @@ import {
   isWorkoutStored,
   PLAN_KEY,
   SAVED_KEY,
-  getStoredWorkouts,
 } from "@/lib/workStorage";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import {
-  FaArrowLeft,
   FaCheck,
   FaClock,
   FaDumbbell,
@@ -27,18 +24,7 @@ const API_URL = "https://api.api-store.workers.dev/api/fitlog";
 
 export default function WorkoutDetailsPage() {
   return (
-    <Suspense
-      fallback={
-        <main className="min-h-screen bg-[#17130F] px-5 py-10 text-white sm:px-8 lg:px-12">
-          <div className="mx-auto max-w-7xl">
-            <p className="flex items-center gap-2 text-gray-300">
-              <FaDumbbell className="text-[#C8FF36]" />
-              Loading workout details...
-            </p>
-          </div>
-        </main>
-      }
-    >
+    <Suspense fallback={<div className="min-h-screen bg-[#17130F]" />}>
       <WorkoutDetailsContent />
     </Suspense>
   );
@@ -50,43 +36,20 @@ function WorkoutDetailsContent() {
 
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [addedToPlan, setAddedToPlan] = useState(false);
   const [savedForLater, setSavedForLater] = useState(false);
 
   useEffect(() => {
     async function getWorkout() {
       try {
-        setLoading(true);
-        setError("");
-
-        const response = await fetch(API_URL, {
-          cache: "no-store",
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch workouts.");
-        }
-
-        const workouts: Workout[] = await response.json();
-
-        if (!Array.isArray(workouts)) {
-          throw new Error("Invalid workout data.");
-        }
-
-        const foundWorkout =
-          workouts.find((item) => String(item.id) === id) ?? null;
-
-        if (!foundWorkout) {
-          setError("Workout not found.");
-          return;
-        }
+        const response = await fetch(`${API_URL}/${id}`);
+        const foundWorkout: Workout = await response.json();
 
         setWorkout(foundWorkout);
         setAddedToPlan(isWorkoutStored(PLAN_KEY, foundWorkout.id));
         setSavedForLater(isWorkoutStored(SAVED_KEY, foundWorkout.id));
       } catch {
-        setError("Unable to load workout details. Please try again.");
+        toast.error("Unable to load workout details.");
       } finally {
         setLoading(false);
       }
@@ -98,18 +61,9 @@ function WorkoutDetailsContent() {
   function handleAddToPlan() {
     if (!workout) return;
 
-    const alreadyAdded = isWorkoutStored(PLAN_KEY, workout.id);
-
-    if (alreadyAdded) {
+    if (isWorkoutStored(PLAN_KEY, workout.id)) {
       setAddedToPlan(true);
-      toast.error("Already in your Plan!");
-      return;
-    }
-
-    const currentPlan = getStoredWorkouts(PLAN_KEY);
-
-    if (currentPlan.length >= 5) {
-      toast.warning("Your plan is full! You can add up to 5 workouts.");
+      toast.info("Already in your plan!");
       return;
     }
 
@@ -121,11 +75,9 @@ function WorkoutDetailsContent() {
   function handleSaveForLater() {
     if (!workout) return;
 
-    const alreadySaved = isWorkoutStored(SAVED_KEY, workout.id);
-
-    if (alreadySaved) {
+    if (isWorkoutStored(SAVED_KEY, workout.id)) {
       setSavedForLater(true);
-      toast.error("This workout already saved!");
+      toast.info("Workout already saved!");
       return;
     }
 
@@ -136,28 +88,14 @@ function WorkoutDetailsContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#17130F] px-5 py-10 text-white sm:px-8 lg:px-12">
-        <div className="mx-auto max-w-7xl">
-          <p className="flex items-center gap-2 text-gray-300">
-            <FaDumbbell className="text-[#C8FF36]" />
-            Loading workout details...
-          </p>
-        </div>
+      <main className="flex min-h-screen items-center justify-center bg-[#17130F] text-[#C8FF36]">
+        <FaDumbbell className="animate-pulse text-3xl" />
       </main>
     );
   }
 
   if (!workout) {
-    return (
-      <main className="min-h-screen bg-[#17130F] px-5 py-10 text-white sm:px-8 lg:px-12">
-        <div className="mx-auto max-w-7xl">
-          <p className="text-gray-300">{error || "Workout not found."}</p>
-          <Link href="/" className="mt-4 inline-flex items-center gap-2 text-[#C8FF36]">
-            <FaArrowLeft /> Back to workouts
-          </Link>
-        </div>
-      </main>
-    );
+    return <main className="min-h-screen bg-[#17130F]" />;
   }
 
   return (
@@ -248,25 +186,20 @@ function WorkoutDetailsContent() {
                 Instructions
               </h2>
 
-              {workout.instructions?.length ? (
-                <ol className="mt-4 space-y-3">
-                  {workout.instructions.map((instruction, index) => (
-                    <li
-                      key={`${index}-${instruction}`}
-                      className="flex gap-3 text-sm leading-6 text-gray-300"
-                    >
-                      <span className="mt-1 text-[#C8FF36]">
-                        <FaCheck size={12} />
-                      </span>
-                      <span>{instruction}</span>
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <p className="mt-3 text-sm text-gray-400">
-                  Instructions are not available for this workout yet.
-                </p>
-              )}
+              <ol className="mt-4 space-y-3">
+                {workout.instructions?.map((instruction, index) => (
+                  <li
+                    key={`${index}-${instruction}`}
+                    className="flex gap-3 text-sm leading-6 text-gray-300"
+                  >
+                    <span className="mt-1 text-[#C8FF36]">
+                      <FaCheck size={12} />
+                    </span>
+
+                    <span>{instruction}</span>
+                  </li>
+                ))}
+              </ol>
             </section>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -276,7 +209,7 @@ function WorkoutDetailsContent() {
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#C8FF36] px-5 py-3 text-sm font-extrabold text-[#17130F] transition hover:bg-lime-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C8FF36]"
               >
                 {addedToPlan ? <FaCheck /> : <FaDumbbell />}
-                { "Add to today's plan"}
+                Add to today's plan
               </button>
 
               <button
@@ -285,7 +218,7 @@ function WorkoutDetailsContent() {
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/20 px-5 py-3 text-sm font-bold text-white transition hover:border-[#C8FF36] hover:text-[#C8FF36] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C8FF36]"
               >
                 {savedForLater ? <FaCheck /> : <FaBookmark />}
-                {"Save for later"}
+                Save for later
               </button>
             </div>
           </div>

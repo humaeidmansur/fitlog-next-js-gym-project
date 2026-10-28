@@ -97,14 +97,14 @@ export default function MyPlanPage() {
       setPlan(updatedPlan);
       localStorage.setItem(PLAN_KEY, JSON.stringify(updatedPlan));
 
-      toast.info("Workout removed from your plan.");
+      toast.success("Workout removed from your plan.");
     } else {
       const updatedSaved = saved.filter((workout) => workout.id !== id);
 
       setSaved(updatedSaved);
       localStorage.setItem(SAVED_KEY, JSON.stringify(updatedSaved));
 
-      toast.info("Workout removed from saved items.");
+      toast.success("Removed from saved items.");
     }
 
     window.dispatchEvent(new Event("fitlog-storage"));
@@ -114,14 +114,10 @@ export default function MyPlanPage() {
     const alreadyAdded = plan.some((item) => item.id === workout.id);
 
     if (alreadyAdded) {
-      toast.info("This workout is already in your plan!");
+      toast.error("Already added in your plan!");
       return;
     }
 
-    if (plan.length >= 5) {
-      toast.warning("Your plan is full! You can add up to 5 workouts.");
-      return;
-    }
 
     const updatedPlan = [...plan, workout];
 
@@ -258,35 +254,11 @@ export default function MyPlanPage() {
             <div className="flex min-h-48 items-center justify-center">
               <span className="loading loading-spinner loading-lg text-[#C8FF36]" />
             </div>
-          ) : sortedWorkouts.length === 0 ? (
-            <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-white/[0.09] px-4 text-center">
-              <FaDumbbell className="mb-4 text-4xl text-[#C8FF36]" />
-
-              <h2 className="text-base font-black uppercase tracking-wide sm:text-lg">
-                Nothing here yet
-              </h2>
-
-              <p className="mt-2 max-w-sm text-[11px] leading-5 text-gray-500 sm:text-xs">
-                {activeTab === "today"
-                  ? "Browse the library and add a workout to get today moving."
-                  : "Save a workout from the library and it will appear here."}
-              </p>
-
-              <Link
-                href="/"
-                className="mt-5 inline-flex items-center justify-center rounded-full bg-[#C8FF36] px-5 py-2.5 text-[11px] font-extrabold text-black transition hover:bg-lime-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C8FF36]"
-              >
-                Go to workouts
-              </Link>
-            </div>
+          
           ) : (
             <div className="flex flex-col gap-4">
               {sortedWorkouts.map((workout) => {
-                const alreadyAdded = plan.some(
-                  (item) => item.id === workout.id
-                );
-
-                const planIsFull = plan.length >= 5;
+            
 
                 return (
                   <article
@@ -356,7 +328,8 @@ export default function MyPlanPage() {
 
                           {doneIds.includes(workout.id)
                             ? "Done"
-                            : "Mark as Done"}
+                            : "Mark as Done"
+                            }
                         </button>
                       ) : (
                         <button
@@ -364,14 +337,7 @@ export default function MyPlanPage() {
                           onClick={() => addToPlan(workout)}
                           className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#C8FF36] px-3 py-2 text-xs font-extrabold text-black transition hover:bg-[#d8ff70] sm:px-4 sm:text-sm"
                         >
-                          {alreadyAdded ? (
-                            <>
-                              <FaCheck aria-hidden="true" />
-                              Already Added
-                            </>
-                          ) : planIsFull ? (
-                            "Plan is full"
-                          ) : (
+                          {(
                             <>
                               <FaDumbbell aria-hidden="true" />
                               Add to Plan
