@@ -9,7 +9,6 @@ import {
   FaFire,
   FaStar,
   FaCheck,
-  FaTrash,
   FaDumbbell,
 } from "react-icons/fa";
 import type { Workout } from "../../Types/type.js";
@@ -66,13 +65,10 @@ export default function MyPlanPage() {
       switch (sortBy) {
         case "calories":
           return b.caloriesBurned - a.caloriesBurned;
-
         case "rating":
           return b.rating - a.rating;
-
         case "name":
           return a.name.localeCompare(b.name);
-
         case "duration":
         default:
           return a.duration - b.duration;
@@ -118,7 +114,6 @@ export default function MyPlanPage() {
       return;
     }
 
-
     const updatedPlan = [...plan, workout];
 
     setPlan(updatedPlan);
@@ -130,68 +125,74 @@ export default function MyPlanPage() {
   }
 
   function markAsDone(id: number) {
-    if (doneIds.includes(id)) {
-      toast.info("This workout is already marked as done.");
-      return;
-    }
+    const isDone = doneIds.includes(id);
 
-    const updatedDoneIds = [...doneIds, id];
+    const updatedDoneIds = isDone
+      ? doneIds.filter((doneId) => doneId !== id)
+      : [...doneIds, id];
 
     setDoneIds(updatedDoneIds);
     localStorage.setItem(DONE_KEY, JSON.stringify(updatedDoneIds));
 
-    toast.success("Great job! Workout completed!");
+    if (isDone) {
+      toast.info("Workout is not marked.");
+    } else {
+      toast.success("Great job! Workout completed!");
+    }
   }
 
   return (
     <main className="min-h-screen bg-[#0E1014] px-5 py-8 text-white sm:px-8 lg:px-12">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-5">
+        <div className="mb-6">
           <h1 className="text-2xl font-black uppercase tracking-tight sm:text-3xl">
-            My Plan
+            MY PLAN
           </h1>
 
-          <p className="mt-1 text-xs text-gray-500 sm:text-sm">
+          <p className="mt-2 text-sm text-gray-400">
             Cap of five lifts for today. Finish them, then load more.
           </p>
         </div>
 
         <section
-          aria-label="Today's workout statistics"
-          className="grid grid-cols-3 rounded-xl border border-white/[0.07] bg-[#14171D] px-4 py-5 sm:px-6"
+          aria-label="Workout statistics"
+          className="mb-6 grid grid-cols-3 gap-3 sm:gap-5"
         >
-          <div className="border-r border-white/[0.06] pr-3 sm:pr-6">
-            <p className="text-[10px] text-gray-500 sm:text-xs">
-              Exercises
-            </p>
+          <div className="rounded-xl border border-white/[0.08] bg-[#14171D] p-4 sm:p-6">
+            <div className="flex items-center gap-2 text-gray-400">
+              <FaDumbbell className="text-sm text-[#C8FF36]" />
+              <p className="text-xs font-medium sm:text-sm">Exercises</p>
+            </div>
 
-            <p className="mt-1 text-2xl font-black leading-none text-[#C8FF36] sm:text-3xl">
+            <p className="mt-3 text-2xl font-black text-[#C8FF36] sm:text-3xl">
               {ready ? plan.length : 0}
             </p>
           </div>
 
-          <div className="border-r border-white/[0.06] px-3 sm:px-6">
-            <p className="text-[10px] text-gray-500 sm:text-xs">
-              Minutes
-            </p>
+          <div className="rounded-xl border border-white/[0.08] bg-[#14171D] p-4 sm:p-6">
+            <div className="flex items-center gap-2 text-gray-400">
+              <FaClock className="text-sm text-[#C8FF36]" />
+              <p className="text-xs font-medium sm:text-sm">Minutes</p>
+            </div>
 
-            <p className="mt-1 text-2xl font-black leading-none sm:text-3xl">
+            <p className="mt-3 text-2xl font-black sm:text-3xl">
               {ready ? totalMinutes : 0}
             </p>
           </div>
 
-          <div className="pl-3 sm:pl-6">
-            <p className="text-[10px] text-gray-500 sm:text-xs">
-              Calories
-            </p>
+          <div className="rounded-xl border border-white/[0.08] bg-[#14171D] p-4 sm:p-6">
+            <div className="flex items-center gap-2 text-gray-400">
+              <FaFire className="text-sm text-[#C8FF36]" />
+              <p className="text-xs font-medium sm:text-sm">Calories</p>
+            </div>
 
-            <p className="mt-1 text-2xl font-black leading-none sm:text-3xl">
+            <p className="mt-3 text-2xl font-black sm:text-3xl">
               {ready ? totalCalories : 0}
             </p>
           </div>
         </section>
 
-        <div className="mb-4 mt-5 flex flex-wrap items-center justify-between gap-4">
+        <div className="mb-5 mt-6 flex flex-wrap items-center justify-between gap-4">
           <div
             className="inline-flex rounded-lg border border-white/[0.06] bg-[#14171D] p-1"
             role="tablist"
@@ -202,10 +203,10 @@ export default function MyPlanPage() {
               role="tab"
               aria-selected={activeTab === "today"}
               onClick={() => setActiveTab("today")}
-              className={`rounded-md px-4 py-2 text-[11px] transition ${
+              className={`rounded-md px-4 py-2 text-xs transition ${
                 activeTab === "today"
                   ? "bg-[#222630] font-bold text-[#C8FF36]"
-                  : "text-gray-500 hover:text-white"
+                  : "text-gray-400 hover:text-white"
               }`}
             >
               Today's Plan
@@ -216,19 +217,18 @@ export default function MyPlanPage() {
               role="tab"
               aria-selected={activeTab === "saved"}
               onClick={() => setActiveTab("saved")}
-              className={`rounded-md px-4 py-2 text-[11px] transition ${
+              className={`rounded-md px-4 py-2 text-xs transition ${
                 activeTab === "saved"
                   ? "bg-[#222630] font-bold text-[#C8FF36]"
-                  : "text-gray-500 hover:text-white"
+                  : "text-gray-400 hover:text-white"
               }`}
             >
-              Saved{ready && saved.length > 0 ? ` (${saved.length})` : ""}
+              Saved ({ready ? saved.length : 0})
             </button>
           </div>
 
-          <label className="flex items-center gap-2 text-[10px] text-gray-500 sm:text-xs">
+          <label className="flex items-center gap-2 text-xs text-gray-400">
             Sort By
-
             <select
               value={sortBy}
               onChange={(event) =>
@@ -246,19 +246,39 @@ export default function MyPlanPage() {
 
         <section
           className="min-h-[250px]"
-          aria-label={
-            activeTab === "today" ? "Today's plan" : "Saved workouts"
-          }
+          aria-label={activeTab === "today" ? "Today's plan" : "Saved workouts"}
         >
           {!ready ? (
-            <div className="flex min-h-48 items-center justify-center">
-              <span className="loading loading-spinner loading-lg text-[#C8FF36]" />
+            <div className="flex min-h-64 flex-col items-center justify-center gap-4">
+              <span className="loading loading-bars loading-lg text-[#C8FF36]" />
+              <p className="text-sm text-gray-400">Loading workouts…</p>
             </div>
-          
+          ) : sortedWorkouts.length === 0 ? (
+            <div className="flex min-h-80 flex-col items-center justify-center rounded-2xl border border-white/[0.08] bg-[#14171D] px-6 py-12 text-center">
+              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#C8FF36]/10">
+                <FaDumbbell className="text-2xl text-[#C8FF36]" />
+              </div>
+
+              <h2 className="text-xl font-black uppercase tracking-wide sm:text-2xl">
+                NOTHING HERE YET
+              </h2>
+
+              <p className="mt-3 max-w-sm text-sm leading-6 text-gray-400">
+                Browse the library and add a lift to get today moving.
+              </p>
+
+              <Link
+                href="/"
+                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#C8FF36] px-5 py-3 text-sm font-extrabold text-black transition hover:bg-lime-300"
+              >
+                <FaDumbbell />
+                Go to workouts
+              </Link>
+            </div>
           ) : (
             <div className="flex flex-col gap-4">
               {sortedWorkouts.map((workout) => {
-            
+                const isDone = doneIds.includes(workout.id);
 
                 return (
                   <article
@@ -268,7 +288,7 @@ export default function MyPlanPage() {
                     <div className="flex min-w-0 flex-1 items-center gap-4">
                       <Link
                         href={`/Workout-Details/${workout.id}`}
-                        className="h-24 w-36 shrink-0 overflow-hidden rounded-xl bg-[#222630] sm:h-24 sm:w-36"
+                        className="h-24 w-28 shrink-0 overflow-hidden rounded-xl bg-[#222630] sm:h-24 sm:w-36"
                         aria-label={`View ${workout.name} details`}
                       >
                         <img
@@ -286,11 +306,11 @@ export default function MyPlanPage() {
                           {workout.name}
                         </Link>
 
-                        <p className="mt-1 text-xs font-medium text-sky-300">
-                          {workout.muscleGroups.join(", ")}
+                        <p className="mt-1 text-xs font-medium text-gray-400">
+                          {workout.equipment}
                         </p>
 
-                        <div className="mt-2 flex flex-wrap items-center gap-3 text-sm font-semibold text-gray-200">
+                        <div className="mt-3 flex flex-wrap items-center gap-3 text-sm font-semibold text-gray-200">
                           <span className="flex items-center gap-1.5 text-lime-300">
                             <FaClock aria-hidden="true" />
                             <span>{workout.duration} min</span>
@@ -309,7 +329,7 @@ export default function MyPlanPage() {
                       </div>
                     </div>
 
-                    <div className="flex shrink-0 items-center justify-end gap-2 sm:gap-3">
+                    <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 sm:gap-3">
                       <Link
                         href={`/Workout-Details/${workout.id}`}
                         className="whitespace-nowrap rounded-full border border-sky-300 px-3 py-2 text-xs font-bold text-white transition hover:bg-sky-300/10 sm:px-4 sm:text-sm"
@@ -321,15 +341,14 @@ export default function MyPlanPage() {
                         <button
                           type="button"
                           onClick={() => markAsDone(workout.id)}
-                          disabled={doneIds.includes(workout.id)}
-                          className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#C8FF36] px-3 py-2 text-xs font-extrabold text-black transition hover:bg-[#d8ff70] disabled:cursor-default disabled:opacity-70 sm:px-4 sm:text-sm"
+                          className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-2 text-xs font-extrabold transition sm:px-4 sm:text-sm ${
+                            isDone
+                              ? "bg-gray-600 text-white hover:bg-gray-500"
+                              : "bg-[#C8FF36] text-black hover:bg-[#d8ff70]"
+                          }`}
                         >
                           <FaCheck aria-hidden="true" />
-
-                          {doneIds.includes(workout.id)
-                            ? "Done"
-                            : "Mark as Done"
-                            }
+                          {isDone ? "Undo" : "Mark as Done"}
                         </button>
                       ) : (
                         <button
@@ -337,12 +356,8 @@ export default function MyPlanPage() {
                           onClick={() => addToPlan(workout)}
                           className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#C8FF36] px-3 py-2 text-xs font-extrabold text-black transition hover:bg-[#d8ff70] sm:px-4 sm:text-sm"
                         >
-                          {(
-                            <>
-                              <FaDumbbell aria-hidden="true" />
-                              Add to Plan
-                            </>
-                          )}
+                          <FaDumbbell aria-hidden="true" />
+                          Add to Plan
                         </button>
                       )}
 
@@ -350,10 +365,10 @@ export default function MyPlanPage() {
                         type="button"
                         onClick={() => removeWorkout(workout.id)}
                         aria-label={`Remove ${workout.name}`}
-                        className="rounded-full p-2 text-gray-300 transition hover:bg-red-500/10 hover:text-red-400"
                         title="Remove workout"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-gray-400 transition hover:border-red-500 hover:bg-red-500/10 hover:text-red-400"
                       >
-                        <FaTrash size={15} aria-hidden="true" />
+                        <span className="text-xl leading-none">×</span>
                       </button>
                     </div>
                   </article>
@@ -366,4 +381,3 @@ export default function MyPlanPage() {
     </main>
   );
 }
-
