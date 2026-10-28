@@ -131,7 +131,7 @@ export default function GlobalNotFound() {
             <footer className="mt-16 border-t border-white/[0.08] pt-6">
               <div className="flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
                 <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-600">
-                  © {new Date().getFullYear()} FITLOG
+                  © 2026 FITLOG
                 </p>
 
                 <p className="text-[10px] font-medium tracking-wide text-gray-600">
