@@ -17,7 +17,7 @@ import {
   FaStar,
   FaBookmark,
 } from "react-icons/fa";
-import type { Workout } from "@/Types/type";
+import type { Workout } from "@/types/type";
 
 const API_URL = "https://api.api-store.workers.dev/api/fitlog";
 

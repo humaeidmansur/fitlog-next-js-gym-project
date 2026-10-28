@@ -11,7 +11,7 @@ import {
   FaCheck,
   FaDumbbell,
 } from "react-icons/fa";
-import type { Workout } from "../../Types/type.js";
+import type { Workout } from "../../types/type.js";
 
 type Tab = "today" | "saved";
 type SortOption = "duration" | "calories" | "rating" | "name";

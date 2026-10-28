@@ -1,4 +1,4 @@
-import type { Workout } from "@/Types/type";
+import type { Workout } from "@/types/type";
 
 export const PLAN_KEY = "fitlog-plan";
 export const SAVED_KEY = "fitlog-saved";
