@@ -1,4 +1,3 @@
- 
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
@@ -43,6 +42,11 @@ function WorkoutDetailsContent() {
     async function getWorkout() {
       try {
         const response = await fetch(`${API_URL}/${id}`);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch workout");
+        }
+
         const foundWorkout: Workout = await response.json();
 
         setWorkout(foundWorkout);
@@ -63,7 +67,7 @@ function WorkoutDetailsContent() {
 
     if (isWorkoutStored(PLAN_KEY, workout.id)) {
       setAddedToPlan(true);
-      toast.info("Already in your plan!");
+      toast.info("Workout is already in your plan!");
       return;
     }
 
@@ -77,7 +81,7 @@ function WorkoutDetailsContent() {
 
     if (isWorkoutStored(SAVED_KEY, workout.id)) {
       setSavedForLater(true);
-      toast.info("Workout already saved!");
+      toast.info("Workout is already saved!");
       return;
     }
 
@@ -89,13 +93,20 @@ function WorkoutDetailsContent() {
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#17130F] text-[#C8FF36]">
-        <FaDumbbell className="animate-pulse text-3xl" />
+        <div className="flex items-center gap-3">
+          <span className="loading loading-spinner loading-lg"></span>
+          <span className="text-sm font-bold">Loading workout details...</span>
+        </div>
       </main>
     );
   }
 
   if (!workout) {
-    return <main className="min-h-screen bg-[#17130F]" />;
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#17130F] px-5 text-white">
+        <p className="text-sm font-bold">Workout details could not be loaded.</p>
+      </main>
+    );
   }
 
   return (
@@ -262,4 +273,3 @@ function DetailRow({
     </div>
   );
 }
- 
