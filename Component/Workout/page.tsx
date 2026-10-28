@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaClock, FaFire, FaStar, FaRedoAlt, FaDumbbell } from "react-icons/fa";
 import { toast } from "react-toastify";
-import type { Workout } from "../../Types/type.js";
+import type { Workout } from "@/Types/type";
 
 const API_URL = "https://api.api-store.workers.dev/api/fitlog";
 
