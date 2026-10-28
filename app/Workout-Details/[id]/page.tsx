@@ -7,7 +7,7 @@ import {
   PLAN_KEY,
   SAVED_KEY,
 } from "@/lib/workStorage";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import {
   FaCheck,
@@ -39,9 +39,16 @@ function WorkoutDetailsContent() {
   const [savedForLater, setSavedForLater] = useState(false);
 
   useEffect(() => {
+    let active = true;
+
     async function getWorkout() {
       try {
         const response = await fetch(`${API_URL}/${id}`);
+
+        if (response.status === 404) {
+          if (active) setWorkout(null);
+          return;
+        }
 
         if (!response.ok) {
           throw new Error("Failed to fetch workout");
@@ -49,17 +56,37 @@ function WorkoutDetailsContent() {
 
         const foundWorkout: Workout = await response.json();
 
+        if (
+          !foundWorkout ||
+          String(foundWorkout.id) !== id
+        ) {
+          if (active) setWorkout(null);
+          return;
+        }
+
+        if (!active) return;
+
         setWorkout(foundWorkout);
         setAddedToPlan(isWorkoutStored(PLAN_KEY, foundWorkout.id));
         setSavedForLater(isWorkoutStored(SAVED_KEY, foundWorkout.id));
       } catch {
-        toast.error("Unable to load workout details.");
+        if (active) {
+          toast.error("Unable to load workout details.");
+        }
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
+    setLoading(true);
+    setWorkout(null);
     getWorkout();
+
+    return () => {
+      active = false;
+    };
   }, [id]);
 
   function handleAddToPlan() {
@@ -94,19 +121,17 @@ function WorkoutDetailsContent() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#17130F] text-[#C8FF36]">
         <div className="flex items-center gap-3">
-          <span className="loading loading-spinner loading-lg"></span>
-          <span className="text-sm font-bold">Loading workout details...</span>
+          <span className="loading loading-spinner loading-lg" />
+          <span className="text-sm font-bold">
+            Loading workout details...
+          </span>
         </div>
       </main>
     );
   }
 
   if (!workout) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[#17130F] px-5 text-white">
-        <p className="text-sm font-bold">Workout details could not be loaded.</p>
-      </main>
-    );
+    notFound();
   }
 
   return (
