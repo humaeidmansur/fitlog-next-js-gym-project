@@ -203,7 +203,7 @@ export default function MyPlanPage() {
               role="tab"
               aria-selected={activeTab === "today"}
               onClick={() => setActiveTab("today")}
-              className={`rounded-md px-4 py-2 text-xs transition ${
+              className={`rounded-md px-4 py-2 text-xs transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8FF36] ${
                 activeTab === "today"
                   ? "bg-[#222630] font-bold text-[#C8FF36]"
                   : "text-gray-400 hover:text-white"
@@ -217,7 +217,7 @@ export default function MyPlanPage() {
               role="tab"
               aria-selected={activeTab === "saved"}
               onClick={() => setActiveTab("saved")}
-              className={`rounded-md px-4 py-2 text-xs transition ${
+              className={`rounded-md px-4 py-2 text-xs transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8FF36] ${
                 activeTab === "saved"
                   ? "bg-[#222630] font-bold text-[#C8FF36]"
                   : "text-gray-400 hover:text-white"
@@ -234,7 +234,7 @@ export default function MyPlanPage() {
               onChange={(event) =>
                 setSortBy(event.target.value as SortOption)
               }
-              className="rounded-lg border border-white/[0.08] bg-[#14171D] px-3 py-2 text-xs text-gray-300 outline-none focus:border-[#C8FF36]"
+              className="rounded-lg border border-white/[0.08] bg-[#14171D] px-3 py-2 text-xs text-gray-300 outline-none focus:border-[#C8FF36] focus:outline-2 focus:outline-offset-2 focus:outline-[#C8FF36]"
             >
               <option value="duration">Duration</option>
               <option value="calories">Calories</option>
@@ -341,7 +341,9 @@ export default function MyPlanPage() {
                         <button
                           type="button"
                           onClick={() => markAsDone(workout.id)}
-                          className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-2 text-xs font-extrabold transition sm:px-4 sm:text-sm ${
+                          className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-2 text-xs font-extrabold transition sm:px-4 sm:text-sm
+                            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8FF36]
+                            ${
                             isDone
                               ? "bg-gray-600 text-white hover:bg-gray-500"
                               : "bg-[#C8FF36] text-black hover:bg-[#d8ff70]"
@@ -354,7 +356,7 @@ export default function MyPlanPage() {
                         <button
                           type="button"
                           onClick={() => addToPlan(workout)}
-                          className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#C8FF36] px-3 py-2 text-xs font-extrabold text-black transition hover:bg-[#d8ff70] sm:px-4 sm:text-sm"
+                          className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#C8FF36] px-3 py-2 text-xs font-extrabold text-black transition hover:bg-[#d8ff70] sm:px-4 sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8FF36]"
                         >
                           <FaDumbbell aria-hidden="true" />
                           Add to Plan
@@ -366,7 +368,8 @@ export default function MyPlanPage() {
                         onClick={() => removeWorkout(workout.id)}
                         aria-label={`Remove ${workout.name}`}
                         title="Remove workout"
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-gray-400 transition hover:border-red-500 hover:bg-red-500/10 hover:text-red-400"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-gray-400 transition hover:border-red-500 hover:bg-red-500/10 hover:text-red-400
+                        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8FF36]"
                       >
                         <span className="text-xl leading-none">×</span>
                       </button>
