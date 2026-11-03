@@ -48,31 +48,41 @@ Enjoy responsive layouts, DaisyUI loading spinners, toast notifications, API err
 1. Clone the repository:
 
 
-   git clone YOUR_GITHUB_REPOSITORY_URL
+git clone https://github.com/humaeidmansur/fitlog-next-js-gym-project.git
 
 
 2. Navigate to the project directory:
 
-  
-   cd YOUR_PROJECT_FOLDER
+
+cd fitlog-next-js-gym-project
 
 
 3. Install dependencies:
 
 
-   npm install
+npm install
 
 
 4. Start the development server:
 
- 
-   npm run dev
-   
 
-5. Open the application in your browser:
+npm run dev
 
- 
-   http://localhost:3000
+
+5. Open your browser and visit:
+
+
+http://localhost:3000
+
+
+### Production Build
+
+To check whether the project builds successfully, run:
+
+
+npm run build
+
+
   
 
 ## 📁 Project Structure
